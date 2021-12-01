@@ -1,0 +1,9 @@
+{
+  "stark": {
+    "hostname": "xxx.xxx.xxx.xxx",
+    "port": xxx,
+    "username": "xxx",
+    "password": "1",
+    "gpu_num": 4
+  }
+}
