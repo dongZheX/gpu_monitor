@@ -388,8 +388,8 @@ if __name__ == "__main__":
             runner(gpus_runners)
         elif ia == 4:
             for name in servers_name:
-                for gpu_id in list(gpu_runners[name].keys()):
-                    gpu_runners[name][gpu_id].stop()
+                for gpu_id in list(gpus_runners[name].keys()):
+                    gpus_runners[name][gpu_id].stop()
             exit()
 
 
