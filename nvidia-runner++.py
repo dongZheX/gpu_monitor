@@ -17,7 +17,7 @@ import os
 from pyfiglet import Figlet
 from gpu_thread import gpu_runner
 from task import Task
-column = ['id','dir','command',	'server','gpu','free','Priority','state','start_time','running_time',"ps_id"]
+column = ['id','dir','command',	'server','gpu','free','Priority','state','start_time','running_time',"ps_id","used"]
 task_id = 0
 os.system("cls")
 servers = json.load(open("configs/server.json"))
@@ -207,16 +207,16 @@ def change_task(gpu_runners):
 def show_running_task(gpu_runners):
     print("========================================================================================================"
           "===========================================================================")
-    print("%-7s%-7s%-5s%-30s%-50s%-13s%-10s%-10s%-20s%-20s%-6s" % (
-        "name", "GPU_id","id", "dir", "command", "state", "free", "priority", "start_time", "running_time", "ps_id"))
+    print("%-7s%-7s%-5s%-30s%-50s%-13s%-10s%-10s%-20s%-20s%-6s%-10s" % (
+        "name", "GPU_id","id", "dir", "command", "state", "free", "priority", "start_time", "running_time", "ps_id", "used"))
     for name in servers_name:
         for gpu_id in list(gpu_runners[name].keys()):
             gpu = gpu_runners[name][gpu_id]
             for task in gpu.tasks:
-                print("%-7s%-7d%-5d%-30s%-50s%-13s%-10s%-10d%-20s%-20s%-6d" % (
+                print("%-7s%-7d%-5d%-30s%-50s%-13s%-10s%-10d%-20s%-20s%-6d%-10s" % (
                     name, gpu.gpu_id, task.id, task.dir, task.command[:-1 if len(task.command) < 50 else 49],
                     task.state,task.free, task.priority, task.start_time, task.running_time,
-                    task.ps_id))
+                    task.ps_id, task.used))
 
     print("========================================================================================================"
           "===========================================================================")
@@ -257,6 +257,7 @@ def save_task(gpu_runners):
                 sheet.cell(row, 9, task.start_time)
                 sheet.cell(row, 10, task.running_time)
                 sheet.cell(row, 11, task.ps_id)
+                sheet.cell(row, 12, task.used)
                 row += 1
     workbook.save(excel_dir)
     print("Ok")
@@ -389,8 +390,7 @@ if __name__ == "__main__":
             for name in servers_name:
                 for gpu_id in list(gpu_runners[name].keys()):
                     gpu_runners[name][gpu_id].stop()
-            break
-     exit()
+            exit()
 
 
         # ia = print_menu()

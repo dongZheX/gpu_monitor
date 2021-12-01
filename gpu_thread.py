@@ -188,7 +188,7 @@ class gpu_runner(threading.Thread):
                                 self.__flag.wait()
                                 find__ = False
                                 find_ = False
-                                time.sleep(3)
+                                time.sleep(10)
                                 try:
                                     find__ = self.find_nvidia_pid(id)
                                     find_ = self.find_ps_pid(id)
@@ -202,9 +202,13 @@ class gpu_runner(threading.Thread):
                                         task.state = "Running"
                                         task.running_time = time.strftime('%Y-%m-%d %H:%M:%S')
                                         task.ps_id = id
+                                        time.sleep(5)
+                                        is_, task.used = self.find_nvidia_used(id)
                                         break
-                                    if find_ is False:
+                                    if find_ is False or is_ is False:
+                                        task.ps_id = id
                                         task.state = "Error"
+                                        task.used = -1
                                         break
                         break
                 if not self.__running.isSet():
@@ -235,6 +239,21 @@ class gpu_runner(threading.Thread):
             return True
         else:
             return False
+
+
+    def find_nvidia_used(self, id):
+        command = "nvidia-smi --query-compute-apps=pid,used_memory  --format=csv,nounits,noheader"
+        try:
+            ret = self.conn.exec_command(command)
+        except paramiko.ssh_exception.SSHException:
+            self.init()
+            ret = self.conn.exec_command(command)
+        ret = ret.decode().split('\n')
+        for r in ret[:-1]:
+            rr = r.split(", ")
+            if int(rr[0]) == id and int(rr[1]) != 0:
+                return True, rr[1]
+        return False, -1
 
     def stop(self):
         self.__running.clear()
