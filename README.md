@@ -21,5 +21,3 @@ pip install cryptography
    1.3 You can save the present task.
 2. Use module `GPU Monitor` to monitor the gpu remotely.
 3. User module `GPU Runner` to start, pause, resume and stop the thread which seize the server resources.
-
-## This Is Just For Fun.
